@@ -38,14 +38,16 @@ export default function RootLayout({
           <DashboardSidebar />
 
           {/* Main Content */}
-          <div className="flex flex-1 flex-col bg-[#EDEEF1]">
+          <div className="flex flex-1 shrink-0 flex-col bg-[#F8FAFC] ">
             {/* Top Header */}
-            <DashboardHeader />
+            <DashboardHeader  />
 
             {/* Page Content */}
-            <AppProvider>
-              {children}
-            </AppProvider>
+            <main className="flex-1 overflow-y-auto scrollbar-hide">
+              <AppProvider>
+                {children}
+              </AppProvider>
+            </main>
           </div>
         </div>
       </body>

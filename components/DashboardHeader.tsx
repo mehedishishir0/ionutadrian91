@@ -1,82 +1,72 @@
 "use client";
 
-import { Moon, RotateCw, Bell } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import {  Bell } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardHeader() {
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
+  const pathname = usePathname();
 
-  useEffect(() => {
-    // In a real app, this would update every second, but for the design, we can show a static or dynamic time.
-    // Let's just use a static mock as requested in the design, or a live one.
-    // I will put a live one for the realistic feel, but matching format.
-    const updateTime = () => {
-      const now = new Date();
-      setTime(now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      setDate(now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long' }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const isCalendar = pathname === "/calendar";
 
   return (
-    <header className="h-[90px] bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
-      {/* Left side */}
-      <div className="flex flex-col">
-        <h1 className="text-[22px] font-bold text-gray-900 leading-tight">
-          Good morning, Ionut
-        </h1>
-        <p className="text-[14px] text-gray-500 mt-0.5">
-          A steady start. 6 items are ready for you, and every crew is out and checked in.
-        </p>
+    <header className="flex h-[80px] w-full items-center justify-between border-b border-[#FBF3C4]  bg-[#FFFFFF] px-6 shrink-0 select-none">
+      
+      {/* Left Section: Logo Container & Greeting Header */}
+      <div className="flex items-center gap-8 h-full">
+       
+        {/* Dynamic Section Title / Greeting */}
+        <div className="flex flex-col justify-center">
+          <h1 className="text-lg font-bold text-[#1E293B] leading-tight">
+            {isCalendar ? "Calendar" : "Good morning, Ionut"}
+          </h1>
+          {!isCalendar && (
+            <p className="text-xs font-medium text-[#64748B] mt-0.5">
+              A steady start. 6 items are ready for you, and every crew is out and checked in.
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-6">
-        {/* Time and Date */}
-        <div className="flex flex-col items-end justify-center mr-2">
-          <span className="text-[15px] font-bold text-gray-900 leading-none">
-            {time || "12:16:55"}
-          </span>
-          <span className="text-[13px] text-gray-500 mt-1 leading-none">
-            {date || "Wed 20 July"}
-          </span>
-        </div>
-
-        {/* Action Icons */}
-        <div className="flex items-center gap-3">
-          <button className="h-9 w-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors">
-            <Moon className="h-4 w-4" />
-          </button>
-          <button className="h-9 w-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors">
-            <RotateCw className="h-4 w-4" />
-          </button>
-          <button className="h-9 w-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors">
-            <Bell className="h-4 w-4" />
-          </button>
+      {/* Right Section: Time/Date, Utility Buttons & User Profile */}
+      <div className="flex items-center gap-5">
+        
+     
+        {/* Action Controls */}
+        <div className="flex items-center gap-2"> 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-full bg-[#EAE8E1]/60 text-[#475569] hover:bg-[#E2DFD6] hover:text-[#0F172A] transition-colors"
+            aria-label="Notifications"
+          >
+            <Bell className="h-[18px] w-[18px]" />
+          </Button>
         </div>
 
         {/* User Profile */}
-        <div className="flex items-center gap-3 ml-2 pl-6 border-l border-gray-100 cursor-pointer">
-          <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden relative">
-            <img
+        <div className="flex items-center gap-3 pl-2">
+          <Avatar className="h-9 w-9 border border-[#E0DCD3]">
+            <AvatarImage
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-              alt="User"
-              className="w-full h-full object-cover"
+              alt="Demo Name"
             />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[14px] font-bold text-gray-900 leading-tight">
+            <AvatarFallback className="bg-[#1E293B] text-white font-semibold text-xs">
+              DN
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex flex-col text-left">
+            <span className="text-xs font-bold text-[#1E293B] leading-tight">
               Demo Name
             </span>
-            <span className="text-[13px] text-gray-500">
+            <span className="text-[11px] font-medium text-[#64748B]">
               Admin
             </span>
           </div>
         </div>
+
       </div>
     </header>
   );
