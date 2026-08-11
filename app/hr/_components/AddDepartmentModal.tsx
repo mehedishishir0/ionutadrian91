@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -17,14 +19,78 @@ interface AddDepartmentModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface CreateDepartmentPayload {
+  name: string;
+  description: string;
+}
+
 export function AddDepartmentModal({
   open,
   onOpenChange,
 }: AddDepartmentModalProps) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["create-department"],
+    mutationFn: async ({ name, description }: CreateDepartmentPayload) => {
+      const apiBaseURL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const token = process.env.NEXT_PUBLIC_API_TOKEN;
+
+      if (!token) {
+        throw new Error("Missing NEXT_PUBLIC_API_TOKEN environment variable");
+      }
+
+      const res = await fetch(
+        `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name,
+            description,
+          }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || (data.statusCode && data.statusCode >= 400)) {
+        throw new Error(data.message || "Failed to create department");
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Department created successfully");
+      setName("");
+      setDescription("");
+      onOpenChange(false);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create department");
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!name.trim() || !description.trim()) {
+      toast.error("Please enter department name and description");
+      return;
+    }
+
+    mutate({
+      name: name.trim(),
+      description: description.trim(),
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px] bg-[#FAF9F6] p-6 rounded-2xl border-none shadow-xl">
-        
         {/* Header */}
         <DialogHeader className="p-0 text-left">
           <DialogTitle className="text-xl font-bold text-[#0F172A]">
@@ -34,41 +100,32 @@ export function AddDepartmentModal({
 
         {/* Form Body */}
         <div className="space-y-4 pt-2 text-left">
-          
           {/* Department Name */}
           <div className="space-y-1.5">
             <Label className="text-xs font-bold text-[#0F172A]">
               Department name
             </Label>
             <Input
-              placeholder="e.g. Aurelia Residences"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="e.g. Human Resources"
               className="bg-white border-slate-300/80 h-11 rounded-xl text-xs text-slate-700 focus-visible:ring-1 focus-visible:ring-slate-400"
             />
           </div>
 
-          {/* Department Head */}
-          <div className="space-y-1.5">
-            <Label className="text-xs font-bold text-[#0F172A]">
-              Department head
-            </Label>
-            <select className="w-full h-11 px-3 bg-white border border-slate-300/80 rounded-xl text-xs font-medium text-slate-700 focus:outline-none cursor-pointer">
-              <option>Customer Support</option>
-              <option>Operations</option>
-              <option>Engineering</option>
-            </select>
-          </div>
-
+   
           {/* Description */}
           <div className="space-y-1.5">
             <Label className="text-xs font-bold text-[#0F172A]">
               Description
             </Label>
             <Textarea
-              placeholder="Priya Nair"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Responsible for recruitment and employee wellbeing."
               className="bg-white border-slate-300/80 rounded-xl text-xs min-h-[80px] text-slate-700 focus-visible:ring-1 focus-visible:ring-slate-400"
             />
           </div>
-
         </div>
 
         {/* Footer Buttons */}
@@ -81,13 +138,13 @@ export function AddDepartmentModal({
             Cancel
           </Button>
           <Button
-            onClick={() => onOpenChange(false)}
+            onClick={handleSubmit}
+            disabled={isPending}
             className="bg-[#0B132B] hover:bg-slate-900 text-white rounded-xl font-bold text-xs h-10 px-6"
           >
-            Save Department
+            {isPending ? "Saving..." : "Save Department"}
           </Button>
         </div>
-
       </DialogContent>
     </Dialog>
   );

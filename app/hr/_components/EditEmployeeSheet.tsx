@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { useState, useRef, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -13,12 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Clock } from "lucide-react";
+import { Camera, Clock, UploadCloud, File as FileIcon, X } from "lucide-react";
 import Image from "next/image";
 
-interface AddTeamMemberSheetProps {
+interface EditEmployeeSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  employeeId?: string | null;
 }
 
 interface Department {
@@ -30,12 +31,17 @@ interface Department {
   __v: number;
 }
 
-export function AddTeamMemberSheet({
+export function EditEmployeeSheet({
   open,
   onOpenChange,
-}: AddTeamMemberSheetProps) {
+  employeeId,
+}: EditEmployeeSheetProps) {
+  const queryClient = useQueryClient();
+  
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  const [documents, setDocuments] = useState<File[]>([]);
 
   const [fullName, setFullName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
@@ -46,14 +52,17 @@ export function AddTeamMemberSheet({
   const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("18:00");
   const [shiftName, setShiftName] = useState("");
-  const [selectedDays, setSelectedDays] = useState<string[]>(["Fr"]);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [workEmail, setWorkEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [homeAddress, setHomeAddress] = useState("");
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
 
+  const [isCompleted, setIsCompleted] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
   const days = ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"];
 
@@ -75,6 +84,22 @@ export function AddTeamMemberSheet({
     }
   };
 
+  const handleDocumentsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter((f) => {
+      if (f.size > 25 * 1024 * 1024) {
+        toast.error(`File ${f.name} is too large (max 25MB)`);
+        return false;
+      }
+      return true;
+    });
+    setDocuments((prev) => [...prev, ...validFiles]);
+  };
+
+  const removeDocument = (index: number) => {
+    setDocuments((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const { data: departmentsData } = useQuery({
     queryKey: ["departments"],
     queryFn: async () => {
@@ -94,37 +119,66 @@ export function AddTeamMemberSheet({
     },
   });
 
-  const resetForm = () => {
-    setPhoto(null);
-    setPhotoPreview(null);
-    setFullName("");
-    setJobTitle("");
-    setDepartmentId("");
-    setWorkerType("Field Engineer");
-    setPortalPermission("Engineer");
-    setStartDate("");
-    setStartTime("08:00");
-    setEndTime("18:00");
-    setShiftName("");
-    setSelectedDays(["Fr"]);
-    setWorkEmail("");
-    setPhoneNumber("");
-    setHomeAddress("");
-    setEmergencyContactName("");
-    setEmergencyContactPhone("");
-  };
+  const { data: employeeData } = useQuery({
+    queryKey: ["team-member", employeeId],
+    queryFn: async () => {
+      if (!employeeId) return null;
+      const apiBaseURL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const token = process.env.NEXT_PUBLIC_API_TOKEN;
+      const res = await fetch(
+        `${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const resData = await res.json();
+      return resData?.data;
+    },
+    enabled: !!employeeId && open,
+  });
+
+  useEffect(() => {
+    if (employeeData && open) {
+      setFullName(employeeData.fullName || "");
+      setJobTitle(employeeData.jobTitle || "");
+      setDepartmentId(employeeData.departmentId || "");
+      setWorkerType(employeeData.workerType || "Field Engineer");
+      setPortalPermission(employeeData.portalPermission || "Engineer");
+      setStartDate(employeeData.startDate ? employeeData.startDate.split("T")[0] : "");
+      setStartTime(employeeData.startTime || "08:00");
+      setEndTime(employeeData.endTime || "18:00");
+      setShiftName(employeeData.shiftName || "");
+      setSelectedDays(
+        (employeeData.weekendDays || []).map((d: string) =>
+          d.charAt(0).toUpperCase() + d.slice(1).toLowerCase()
+        )
+      );
+      setWorkEmail(employeeData.workEmail || "");
+      setPhoneNumber(employeeData.phoneNumber || "");
+      setHomeAddress(employeeData.homeAddress || "");
+      setEmergencyContactName(employeeData.emergencyContactName || "");
+      setEmergencyContactPhone(employeeData.emergencyContactPhoneNumber || "");
+      setPhotoPreview(employeeData.photoUrl || null);
+      setPhoto(null);
+      setDocuments([]);
+      setIsCompleted(employeeData.isCompleted || false);
+    }
+  }, [employeeData, open]);
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["create-team-member"],
+    mutationKey: ["update-team-member", employeeId],
     mutationFn: async (formData: FormData) => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
       const res = await fetch(
-        `${apiBaseURL.replace(/\/$/, "")}/hr/team-members`,
+        `${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${employeeId}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -135,22 +189,24 @@ export function AddTeamMemberSheet({
       const data = await res.json();
 
       if (!res.ok || (data.statusCode && data.statusCode >= 400)) {
-        throw new Error(data.message || "Failed to create team member");
+        throw new Error(data.message || "Failed to update team member");
       }
 
       return data;
     },
     onSuccess: (data) => {
-      toast.success(data?.message || "Team member created successfully");
-      resetForm();
+      toast.success(data?.message || "Team member updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      queryClient.invalidateQueries({ queryKey: ["team-member", employeeId] });
       onOpenChange(false);
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to create team member");
+      toast.error(error.message || "Failed to update team member");
     },
   });
 
   const handleSubmit = () => {
+    if (!employeeId) return;
     if (
       !fullName ||
       !jobTitle ||
@@ -170,6 +226,11 @@ export function AddTeamMemberSheet({
 
     const formData = new FormData();
     if (photo) formData.append("photo", photo);
+    
+    documents.forEach((doc) => {
+      formData.append("documents", doc);
+    });
+
     formData.append("fullName", fullName);
     formData.append("jobTitle", jobTitle);
     formData.append("departmentId", departmentId);
@@ -189,6 +250,7 @@ export function AddTeamMemberSheet({
     if (homeAddress) formData.append("homeAddress", homeAddress);
     formData.append("emergencyContactName", emergencyContactName);
     formData.append("emergencyContactPhoneNumber", emergencyContactPhone);
+    formData.append("isCompleted", isCompleted.toString());
 
     mutate(formData);
   };
@@ -199,11 +261,11 @@ export function AddTeamMemberSheet({
         {/* Title */}
         <SheetHeader className="p-0 text-left pb-4 border-b border-slate-100">
           <SheetTitle className="text-lg font-bold text-[#0F172A]">
-            Add Team Member
+            Edit Team Member
           </SheetTitle>
           <div className="pt-2">
             <span className="text-xs font-bold text-[#0F172A] border-b-2 border-[#0F172A] pb-1 inline-block">
-              Quick Add
+              General Info
             </span>
           </div>
         </SheetHeader>
@@ -469,6 +531,90 @@ export function AddTeamMemberSheet({
               />
             </div>
           </div>
+
+          {/* Documents Upload Section */}
+          <div className="pt-4 space-y-3">
+            <Label className="text-sm font-bold text-[#0F172A]">Documents</Label>
+            <div
+              className="border-2 border-dashed border-slate-300/80 rounded-2xl p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer"
+              onClick={() => docInputRef.current?.click()}
+            >
+              <input
+                type="file"
+                ref={docInputRef}
+                onChange={handleDocumentsChange}
+                accept="application/pdf, image/png, image/jpeg"
+                multiple
+                className="hidden"
+              />
+              <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-2">
+                <UploadCloud className="h-5 w-5" />
+              </div>
+              <p className="text-xs font-bold text-[#0F172A]">
+                Drag & drop files here, or click to browse
+              </p>
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5 mb-3">
+                PDF, PNG, JPG up to 25MB
+              </p>
+              <Button type="button" variant="outline" size="sm" className="h-8 text-xs font-bold rounded-lg border-slate-300 px-4">
+                Select Files
+              </Button>
+            </div>
+
+            {/* Selected Documents List */}
+            {documents.length > 0 && (
+              <div className="space-y-2 mt-4">
+                {documents.map((doc, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-xs"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                        <FileIcon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-[#0F172A] truncate">
+                          {doc.name}
+                        </p>
+                        <p className="text-[10px] text-slate-500 font-medium">
+                          {(doc.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeDocument(idx)}
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Onboarding Status */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-sm font-bold text-[#0F172A]">Complete Onboarding</Label>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                  Mark as completed to promote from onboarding to a permanent employee.
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={isCompleted}
+                  onChange={(e) => setIsCompleted(e.target.checked)}
+                />
+                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* Footer Actions */}
@@ -485,7 +631,7 @@ export function AddTeamMemberSheet({
             disabled={isPending}
             className="flex-1 bg-[#0B132B] hover:bg-slate-900 text-white rounded-xl font-bold text-xs h-10"
           >
-            {isPending ? "Adding..." : "Add Team Member"}
+            {isPending ? "Updating..." : "Update Employee"}
           </Button>
         </div>
       </SheetContent>

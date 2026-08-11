@@ -1,37 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Shield,
   MapPin,
   Heart,
-  AlertTriangle,
   Search,
   ChevronDown,
 } from "lucide-react";
 import { AddTeamMemberSheet } from "./AddTeamMemberSheet";
 import { AddDepartmentModal } from "./AddDepartmentModal";
-import { ViewEmployeeSheet,  EmployeeDetails } from "./ViewEmployeeSheet";
+import { ViewEmployeeSheet, EmployeeDetails } from "./ViewEmployeeSheet";
 
-const employeeData: EmployeeDetails[] = Array(12).fill({
-  fullName: "Daniel Okafor",
-  jobTitle: "Senior Site Engineer",
-  department: "Field Operations",
-  team: "Infrastructure Team B",
-  email: "daniel.okafor@apexworks.co",
-  mobile: "+44 7712 445 908",
-  startDate: "12 March 2021",
-  homeAddress: "48 Bridgewater Road, Manchester, M15 4FN",
-  shift: "Day Shift · 07:00-16:00",
-  emergencyContact: "Robert Vance · +44 7712 445 908",
-  weekendDay: "Friday",
-  status: "Active",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel",
-});
+import { EditEmployeeSheet } from "./EditEmployeeSheet";
+import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
+
 export default function HRPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [departmentModalOpen, setDepartmentModalOpen] = useState(false);
@@ -40,9 +29,72 @@ export default function HRPage() {
   const [viewSheetOpen, setViewSheetOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeDetails | null>(null);
 
+  // State for Edit Employee Sidebar Sheet
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
+  const [employeeToEditId, setEmployeeToEditId] = useState<string | null>(null);
+
+  // State for Delete Confirmation Modal
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<{id: string, name: string} | null>(null);
+
+  const { data: teamMembers, isLoading: isLoadingTeamMembers } = useQuery({
+    queryKey: ["team-members"],
+    queryFn: async () => {
+      const apiBaseURL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const token = process.env.NEXT_PUBLIC_API_TOKEN;
+      const res = await fetch(
+        `${apiBaseURL.replace(/\/$/, "")}/hr/team-members`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const resData = await res.json();
+      return resData?.data || [];
+    },
+  });
+
+  const { data: departmentsData } = useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => {
+      const apiBaseURL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const token = process.env.NEXT_PUBLIC_API_TOKEN;
+      const res = await fetch(
+        `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const resData = await res.json();
+      return resData?.data || [];
+    },
+  });
+
+  const getDepartmentName = (id: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dept = departmentsData?.find((d: any) => d.id === id);
+    return dept ? dept.name : id;
+  };
+
   const handleViewEmployee = (emp: EmployeeDetails) => {
     setSelectedEmployee(emp);
     setViewSheetOpen(true);
+  };
+
+  const handleEditEmployee = (empId: string) => {
+    setEmployeeToEditId(empId);
+    setEditSheetOpen(true);
+    setViewSheetOpen(false); // Close view sheet if open
+  };
+
+  const handleDeleteEmployee = (id: string, name: string) => {
+    setEmployeeToDelete({ id, name });
+    setDeleteModalOpen(true);
   };
 
   return (
@@ -72,11 +124,10 @@ export default function HRPage() {
             Add Team Member
           </Button>
         </div>
-       
       </div>
 
       {/* Overview Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* People */}
         <Card className="bg-white border-0 border-l-4 border-l-blue-500 shadow-xs rounded-2xl p-5">
           <CardContent className="p-0 flex flex-col gap-4">
@@ -90,7 +141,9 @@ export default function HRPage() {
               <span className="h-3 w-3 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-2.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-[#0F172A]">28</span>
+              <span className="text-2xl font-bold text-[#0F172A]">
+                {teamMembers?.length || 0}
+              </span>
               <span className="text-xs font-medium text-slate-500">
                 Employees
               </span>
@@ -113,7 +166,9 @@ export default function HRPage() {
               <span className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-2.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-[#0F172A]">8</span>
+              <span className="text-2xl font-bold text-[#0F172A]">
+                {departmentsData?.length || 0}
+              </span>
               <span className="text-xs font-medium text-slate-500">
                 Departments
               </span>
@@ -136,7 +191,9 @@ export default function HRPage() {
               <span className="h-3 w-3 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-2.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-[#0F172A]">12</span>
+              <span className="text-2xl font-bold text-[#0F172A]">
+                {teamMembers?.filter((emp: EmployeeDetails) => !emp.isCompleted).length || 0}
+              </span>
               <span className="text-xs font-medium text-slate-500">
                 Pending
               </span>
@@ -145,7 +202,7 @@ export default function HRPage() {
         </Card>
 
         {/* Organization Chart */}
-        <Card className="bg-white border-0 border-l-4 border-l-emerald-500 shadow-xs rounded-2xl p-5">
+        {/* <Card className="bg-white border-0 border-l-4 border-l-emerald-500 shadow-xs rounded-2xl p-5">
           <CardContent className="p-0 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -159,11 +216,11 @@ export default function HRPage() {
               <span className="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-2.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-[#0F172A]">24</span>
+              <span className="text-2xl font-bold text-[#0F172A]">0</span>
               <span className="text-xs font-medium text-slate-500">Teams</span>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Search & Filters */}
@@ -204,59 +261,92 @@ export default function HRPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-700">
-              {employeeData.map((emp, idx) => (
-                <tr
-                  key={idx}
-                  className="hover:bg-slate-50/80 transition-colors"
-                >
-                  {/* Employee Name & Avatar */}
-                  <td className="py-2.5 px-4">
-                    <div className="flex items-center gap-2.5">
-                      <Avatar className="h-7 w-7">
-                        <AvatarImage src={emp.avatar} />
-                        <AvatarFallback>RV</AvatarFallback>
-                      </Avatar>
-                      <span className="font-bold text-[#0F172A]">
-                        {emp.fullName}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="py-2.5 px-4 text-slate-500">{emp.jobTitle}</td>
-                  <td className="py-2.5 px-4 text-slate-500">
-                    {emp.department}
-                  </td>
-                  <td className="py-2.5 px-4 text-slate-600">{emp.mobile}</td>
-
-                  {/* Status Badge */}
-                  <td className="py-2.5 px-4">
-                    {idx % 3 === 2 ? (
-                      <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 font-bold text-[10px] rounded-full">
-                        Onboarding
-                      </span>
-                    ) : (
-                      <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 font-bold text-[10px] rounded-full">
-                        ACTIVE
-                      </span>
-                    )}
-                  </td>
-
-                  {/* Actions Buttons */}
-                  <td className="py-2.5 px-4">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button onClick={() => handleViewEmployee(emp)} className="px-2.5 py-1 bg-[#1D4ED8] hover:bg-blue-800 text-white font-bold text-[10px] rounded-md transition-colors">
-                        View
-                      </button>
-                      <button className="px-2.5 py-1 bg-[#10B981] hover:bg-emerald-700 text-white font-bold text-[10px] rounded-md transition-colors">
-                        Edit
-                      </button>
-                      <button className="px-2.5 py-1 bg-[#EF4444] hover:bg-red-700 text-white font-bold text-[10px] rounded-md transition-colors">
-                        Delete
-                      </button>
+              {isLoadingTeamMembers ? (
+                <tr>
+                  <td colSpan={6} className="p-4 text-center text-slate-500">
+                    <div className="flex flex-col gap-2 items-center">
+                      <Skeleton className="h-8 w-full max-w-2xl" />
+                      <Skeleton className="h-8 w-full max-w-2xl" />
+                      <Skeleton className="h-8 w-full max-w-2xl" />
                     </div>
                   </td>
                 </tr>
-              ))}
+              ) : teamMembers?.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 px-4 text-center text-slate-500">
+                    No team members found.
+                  </td>
+                </tr>
+              ) : (
+                teamMembers?.map((emp: EmployeeDetails) => (
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-slate-50/80 transition-colors"
+                  >
+                    {/* Employee Name & Avatar */}
+                    <td className="py-2.5 px-4">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="h-7 w-7">
+                          <AvatarImage src={emp.photoUrl} />
+                          <AvatarFallback>
+                            {emp.fullName?.charAt(0) || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-bold text-[#0F172A]">
+                          {emp.fullName}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="py-2.5 px-4 text-slate-500">
+                      {emp.jobTitle}
+                    </td>
+                    <td className="py-2.5 px-4 text-slate-500">
+                      {getDepartmentName(emp.departmentId)}
+                    </td>
+                    <td className="py-2.5 px-4 text-slate-600">
+                      {emp.phoneNumber}
+                    </td>
+
+                    {/* Status Badge */}
+                    <td className="py-2.5 px-4">
+                      {emp.isCompleted ? (
+                        <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 font-bold text-[10px] rounded-full">
+                          ACTIVE
+                        </span>
+                      ) : (
+                        <span className="inline-block px-3 py-1 bg-amber-50 text-amber-600 font-bold text-[10px] rounded-full">
+                          ONBOARDING
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Actions Buttons */}
+                    <td className="py-2.5 px-4">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleViewEmployee(emp)}
+                          className="px-2.5 py-1 bg-[#1D4ED8] hover:bg-blue-800 text-white font-bold text-[10px] rounded-md transition-colors"
+                        >
+                          View
+                        </button>
+                        <button 
+                          onClick={() => handleEditEmployee(emp.id)}
+                          className="px-2.5 py-1 bg-[#10B981] hover:bg-emerald-700 text-white font-bold text-[10px] rounded-md transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteEmployee(emp.id, emp.fullName)}
+                          className="px-2.5 py-1 bg-[#EF4444] hover:bg-red-700 text-white font-bold text-[10px] rounded-md transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -264,14 +354,30 @@ export default function HRPage() {
 
       {/* Render Slide-over Sheet Component */}
       <AddTeamMemberSheet open={sheetOpen} onOpenChange={setSheetOpen} />
+      <EditEmployeeSheet 
+        open={editSheetOpen} 
+        onOpenChange={setEditSheetOpen} 
+        employeeId={employeeToEditId} 
+      />
       <AddDepartmentModal
         open={departmentModalOpen}
         onOpenChange={setDepartmentModalOpen}
+      />
+      <DeleteConfirmationModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        employeeId={employeeToDelete?.id || null}
+        employeeName={employeeToDelete?.name || null}
       />
       <ViewEmployeeSheet
         open={viewSheetOpen}
         onOpenChange={setViewSheetOpen}
         employee={selectedEmployee}
+        onEdit={() => {
+          if (selectedEmployee?.id) {
+            handleEditEmployee(selectedEmployee.id);
+          }
+        }}
       />
     </div>
   );
