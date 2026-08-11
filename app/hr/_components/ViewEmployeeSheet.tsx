@@ -45,6 +45,7 @@ export interface EmployeeDetails {
   photoUrl?: string;
   hasPhoto?: boolean;
   isCompleted?: boolean;
+  leaveBalance?: number;
   documents?: DocumentItem[];
   createdAt: string;
   updatedAt: string;
@@ -289,6 +290,15 @@ export function ViewEmployeeSheet({
                   </p>
                   <p className="font-semibold text-[#0F172A] mt-1">
                     {data.portalPermission}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[11px] text-slate-400 font-medium">
+                    Leave Balance
+                  </p>
+                  <p className="font-semibold text-[#0F172A] mt-1">
+                    {data.leaveBalance ?? 0}
                   </p>
                 </div>
               </div>

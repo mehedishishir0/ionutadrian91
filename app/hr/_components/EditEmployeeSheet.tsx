@@ -58,6 +58,7 @@ export function EditEmployeeSheet({
   const [homeAddress, setHomeAddress] = useState("");
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
+  const [leaveBalance, setLeaveBalance] = useState("0");
 
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -161,6 +162,7 @@ export function EditEmployeeSheet({
       setHomeAddress(employeeData.homeAddress || "");
       setEmergencyContactName(employeeData.emergencyContactName || "");
       setEmergencyContactPhone(employeeData.emergencyContactPhoneNumber || "");
+      setLeaveBalance(employeeData.leaveBalance?.toString() || "0");
       setPhotoPreview(employeeData.photoUrl || null);
       setPhoto(null);
       setDocuments([]);
@@ -251,6 +253,7 @@ export function EditEmployeeSheet({
     formData.append("emergencyContactName", emergencyContactName);
     formData.append("emergencyContactPhoneNumber", emergencyContactPhone);
     formData.append("isCompleted", isCompleted.toString());
+    formData.append("leaveBalance", leaveBalance);
 
     mutate(formData);
   };
@@ -470,6 +473,21 @@ export function EditEmployeeSheet({
                 );
               })}
             </div>
+          </div>
+
+          {/* Leave Balance */}
+          <div className="space-y-1">
+            <Label className="text-xs font-bold text-slate-700">
+              Leave Balance
+            </Label>
+            <Input
+              type="number"
+              value={leaveBalance}
+              onChange={(e) => setLeaveBalance(e.target.value)}
+              placeholder="e.g. 10"
+              className="bg-white border-slate-200 h-10 rounded-xl text-xs"
+              min="0"
+            />
           </div>
 
           {/* Work Email */}

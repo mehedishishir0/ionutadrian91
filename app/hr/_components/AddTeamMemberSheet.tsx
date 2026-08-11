@@ -52,6 +52,7 @@ export function AddTeamMemberSheet({
   const [homeAddress, setHomeAddress] = useState("");
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
+  const [leaveBalance, setLeaveBalance] = useState("0");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,6 +113,7 @@ export function AddTeamMemberSheet({
     setHomeAddress("");
     setEmergencyContactName("");
     setEmergencyContactPhone("");
+    setLeaveBalance("0");
   };
 
   const { mutate, isPending } = useMutation({
@@ -189,6 +191,7 @@ export function AddTeamMemberSheet({
     if (homeAddress) formData.append("homeAddress", homeAddress);
     formData.append("emergencyContactName", emergencyContactName);
     formData.append("emergencyContactPhoneNumber", emergencyContactPhone);
+    formData.append("leaveBalance", leaveBalance);
 
     mutate(formData);
   };
@@ -408,6 +411,21 @@ export function AddTeamMemberSheet({
                 );
               })}
             </div>
+          </div>
+
+          {/* Leave Balance */}
+          <div className="space-y-1">
+            <Label className="text-xs font-bold text-slate-700">
+              Leave Balance
+            </Label>
+            <Input
+              type="number"
+              value={leaveBalance}
+              onChange={(e) => setLeaveBalance(e.target.value)}
+              placeholder="e.g. 10"
+              className="bg-white border-slate-200 h-10 rounded-xl text-xs"
+              min="0"
+            />
           </div>
 
           {/* Work Email */}
