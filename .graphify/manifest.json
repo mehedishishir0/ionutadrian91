@@ -1,0 +1,162 @@
+{
+  "app/calendar/_components/CalendarDashboard.tsx": {
+    "mtime": 1786363042924.223,
+    "hash": "9b8eb147135cf125d4b884492cad8b35"
+  },
+  "app/calendar/_components/NewAssignmentModal.tsx": {
+    "mtime": 1786362994677.292,
+    "hash": "cd44240dc8801fc12326e09f255db62f"
+  },
+  "app/calendar/page.tsx": {
+    "mtime": 1786363068958.403,
+    "hash": "1c53cf30c9faaed72be892a11517016c"
+  },
+  "app/files/_components/CreateFolderModal.tsx": {
+    "mtime": 1786366137715.4753,
+    "hash": "1389a7c578290b7c6c2b1bd127d31354"
+  },
+  "app/files/_components/FilesDashboard.tsx": {
+    "mtime": 1786371085294.4744,
+    "hash": "eea7fd53f67c300ed21d36bec0afda14"
+  },
+  "app/files/page.tsx": {
+    "mtime": 1786366190731.6807,
+    "hash": "dd9bec4e98ee1683c494d85d4d9e4d59"
+  },
+  "app/hr/_components/AddDepartmentModal.tsx": {
+    "mtime": 1786445812998.3455,
+    "hash": "d353873ef3b301c0d687e5b2ee90020a"
+  },
+  "app/hr/_components/AddTeamMemberSheet.tsx": {
+    "mtime": 1786463980700.5264,
+    "hash": "6695a54b879f6dd55913e1c0ff56dcbc"
+  },
+  "app/hr/_components/DeleteConfirmationModal.tsx": {
+    "mtime": 1786450959809.6177,
+    "hash": "213fa699e207a8c899f99d9f3ee51794"
+  },
+  "app/hr/_components/EditEmployeeSheet.tsx": {
+    "mtime": 1786462646321.104,
+    "hash": "b71b284cedac06ed482a507402aa02a5"
+  },
+  "app/hr/_components/HRPage.tsx": {
+    "mtime": 1786451124537.5864,
+    "hash": "107a2f0e4ecc0c09623a113f1a4d8e1d"
+  },
+  "app/hr/_components/ViewEmployeeSheet.tsx": {
+    "mtime": 1786462676925.4553,
+    "hash": "c0bc3ac87bd00bae9e30217708f08cc7"
+  },
+  "app/hr/page.tsx": {
+    "mtime": 1786363477870.0356,
+    "hash": "dd92795d1401615bf421212c678e1478"
+  },
+  "app/layout.tsx": {
+    "mtime": 1786442365843.4841,
+    "hash": "a06d84640a28c25dfe48fdd4f4fe3683"
+  },
+  "app/page.tsx": {
+    "mtime": 1786362245112.79,
+    "hash": "0f425794a5613e4ba2679033bde91ce3"
+  },
+  "components/DashboardHeader.tsx": {
+    "mtime": 1786361449879.487,
+    "hash": "806739691501ddd0baeeb86180edd40e"
+  },
+  "components/Sidebar.tsx": {
+    "mtime": 1786463140606.7488,
+    "hash": "274945524d6768ae5ffd922ae7d274c2"
+  },
+  "components/home/AppsAtAGlance.tsx": {
+    "mtime": 1786361956043.1467,
+    "hash": "c22d2dca09c7d2aa3de51509d99386dd"
+  },
+  "components/home/EnterpriseProjectOverview.tsx": {
+    "mtime": 1786362066908.0942,
+    "hash": "46502c24c32760f9db28c8f9c867f37f"
+  },
+  "components/home/Home-status.tsx": {
+    "mtime": 1786361792844.1826,
+    "hash": "93d9e5f7ddfb0477fedd9a8261024530"
+  },
+  "components/home/RecentActivity.tsx": {
+    "mtime": 1786362217630.2493,
+    "hash": "e7c2a74d710a252e53dd1888b660578a"
+  },
+  "components/redirect.tsx": {
+    "mtime": 1786205701776.295,
+    "hash": "483504f83606314461081fca9c34f947"
+  },
+  "components/ui/avatar.tsx": {
+    "mtime": 1786359704503.2837,
+    "hash": "8b41492907a73176027427a3f0fd2302"
+  },
+  "components/ui/badge.tsx": {
+    "mtime": 1786362095936.7751,
+    "hash": "e4ec840217040d5630ee6ed7213a1d72"
+  },
+  "components/ui/button.tsx": {
+    "mtime": 1786205426010.7742,
+    "hash": "e04ce5251d6b0dd04020988126c905e9"
+  },
+  "components/ui/card.tsx": {
+    "mtime": 1786360960583.7214,
+    "hash": "baac5330eb05de0cb1da0786f542ba9a"
+  },
+  "components/ui/dialog.tsx": {
+    "mtime": 1786363009977.113,
+    "hash": "93bea24303201f8da5aca0007b52048a"
+  },
+  "components/ui/input.tsx": {
+    "mtime": 1786363016535.388,
+    "hash": "0607b02d99a2e92f9509223f36ccc6ec"
+  },
+  "components/ui/label.tsx": {
+    "mtime": 1786363026127.1282,
+    "hash": "a70440da86bfc6a07f15197cca48cb08"
+  },
+  "components/ui/sheet.tsx": {
+    "mtime": 1786365140539.164,
+    "hash": "2c577c7414c2e24b8ce715b77df168ae"
+  },
+  "components/ui/skeleton.tsx": {
+    "mtime": 1786447982721.08,
+    "hash": "0e6e825c43d858d98c9903f4da975382"
+  },
+  "components/ui/textarea.tsx": {
+    "mtime": 1786363033486.6436,
+    "hash": "d448d2a90e48542e51b93a1189127bf2"
+  },
+  "lib/utils.ts": {
+    "mtime": 1786205426067.281,
+    "hash": "5a6fd53fdcf2be529e9cc0b718fde352"
+  },
+  "next.config.mjs": {
+    "mtime": 1786449733772.0454,
+    "hash": "1b925a488a711556fb39c6807c23bad1"
+  },
+  "postcss.config.mjs": {
+    "mtime": 1786205184479.052,
+    "hash": "b7941c02b947e17ae32f67ae7e664ec8"
+  },
+  "provider/AppProvider.tsx": {
+    "mtime": 1786205764329.8516,
+    "hash": "c3f74af87883ce9678f1c9428bdcc02a"
+  },
+  "tailwind.config.ts": {
+    "mtime": 1786442344531.0056,
+    "hash": "9ab2878ec67dae47c4c8f31bf01d6469"
+  },
+  "README.md": {
+    "mtime": 1786205184478.9832,
+    "hash": "f15aaa42d5d299d091b1171097ea56ad"
+  },
+  "pnpm-lock.yaml": {
+    "mtime": 1786357221966.219,
+    "hash": "184d89b684f36f295b8cc61fd1bb5bc7"
+  },
+  "pnpm-workspace.yaml": {
+    "mtime": 1786205227268.3599,
+    "hash": "0470501c3746ed3cb5f36ae78ed73034"
+  }
+}

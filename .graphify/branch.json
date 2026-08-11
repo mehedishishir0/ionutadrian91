@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "branchName": "main",
+  "worktreePath": "/home/shishir/Desktop/office/ionutadrian/dashboard",
+  "upstream": "origin/main",
+  "mergeBase": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+  "firstSeenHead": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+  "lastSeenHead": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+  "lastAnalyzedHead": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+  "stale": false,
+  "staleReason": null,
+  "staleSince": null,
+  "lifecycleEvent": null,
+  "createdAt": "2026-08-11T15:29:36.580Z",
+  "updatedAt": "2026-08-11T16:00:08.371Z"
+}

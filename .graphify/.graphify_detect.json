@@ -1,0 +1,82 @@
+{
+  "files": {
+    "code": [
+      "app/calendar/_components/CalendarDashboard.tsx",
+      "app/calendar/_components/NewAssignmentModal.tsx",
+      "app/calendar/page.tsx",
+      "app/files/_components/CreateFolderModal.tsx",
+      "app/files/_components/FilesDashboard.tsx",
+      "app/files/page.tsx",
+      "app/hr/_components/AddDepartmentModal.tsx",
+      "app/hr/_components/AddTeamMemberSheet.tsx",
+      "app/hr/_components/DeleteConfirmationModal.tsx",
+      "app/hr/_components/EditEmployeeSheet.tsx",
+      "app/hr/_components/HRPage.tsx",
+      "app/hr/_components/ViewEmployeeSheet.tsx",
+      "app/hr/page.tsx",
+      "app/layout.tsx",
+      "app/page.tsx",
+      "components/DashboardHeader.tsx",
+      "components/Sidebar.tsx",
+      "components/home/AppsAtAGlance.tsx",
+      "components/home/EnterpriseProjectOverview.tsx",
+      "components/home/Home-status.tsx",
+      "components/home/RecentActivity.tsx",
+      "components/redirect.tsx",
+      "components/ui/avatar.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/dialog.tsx",
+      "components/ui/input.tsx",
+      "components/ui/label.tsx",
+      "components/ui/sheet.tsx",
+      "components/ui/skeleton.tsx",
+      "components/ui/textarea.tsx",
+      "lib/utils.ts",
+      "next.config.mjs",
+      "postcss.config.mjs",
+      "provider/AppProvider.tsx",
+      "tailwind.config.ts"
+    ],
+    "document": [
+      "README.md",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml"
+    ],
+    "paper": [],
+    "image": [],
+    "video": []
+  },
+  "total_files": 40,
+  "total_words": 23154,
+  "needs_graph": false,
+  "warning": "Corpus is ~23,154 words - fits in a single context window. You may not need a graph.",
+  "skipped_sensitive": [],
+  "graphifyignore_patterns": 17,
+  "git": {
+    "source_owner": "git",
+    "source_hash": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+    "branches": [
+      "main"
+    ],
+    "max_commits": 200,
+    "active_within_days": 30
+  },
+  "scope": {
+    "requested_mode": "auto",
+    "resolved_mode": "committed",
+    "source": "default-auto",
+    "root": ".",
+    "git_root": ".",
+    "head": "6671644387509e09a26b92c0905abc6db9a1b9b1",
+    "candidate_count": 48,
+    "included_count": 40,
+    "excluded_untracked_count": 76,
+    "excluded_ignored_count": 36212,
+    "excluded_sensitive_count": 0,
+    "missing_committed_count": 0,
+    "warnings": [],
+    "recommendation": "Use --scope all or graphify.yaml inputs.corpus for a knowledge-base folder."
+  }
+}

@@ -36,7 +36,6 @@ export interface EmployeeDetails {
   endTime: string;
   shiftName: string;
   weekendDays: string[];
-  portalPermission: string;
   workEmail: string;
   phoneNumber: string;
   homeAddress?: string;
@@ -45,6 +44,7 @@ export interface EmployeeDetails {
   photoUrl?: string;
   hasPhoto?: boolean;
   isCompleted?: boolean;
+  employeeCategory?: string;
   leaveBalance?: number;
   documents?: DocumentItem[];
   createdAt: string;
@@ -251,6 +251,13 @@ export function ViewEmployeeSheet({
                 </div>
 
                 <div>
+                  <p className="text-[11px] text-slate-400 font-medium">Category</p>
+                  <p className="font-semibold text-[#0F172A] mt-1">
+                    {data.employeeCategory || "—"}
+                  </p>
+                </div>
+
+                <div>
                   <p className="text-[11px] text-slate-400 font-medium">Shift</p>
                   <p className="font-semibold text-[#0F172A] mt-1">
                     {data.shiftName} · {data.startTime}-{data.endTime}
@@ -284,14 +291,6 @@ export function ViewEmployeeSheet({
                   </p>
                 </div>
                 
-                <div>
-                  <p className="text-[11px] text-slate-400 font-medium">
-                    Portal Permission
-                  </p>
-                  <p className="font-semibold text-[#0F172A] mt-1">
-                    {data.portalPermission}
-                  </p>
-                </div>
 
                 <div>
                   <p className="text-[11px] text-slate-400 font-medium">

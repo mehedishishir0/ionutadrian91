@@ -40,8 +40,9 @@ export function AddTeamMemberSheet({
   const [fullName, setFullName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [departmentId, setDepartmentId] = useState("");
+  const [employeeCategory, setEmployeeCategory] = useState("ENGINEER");
   const [workerType, setWorkerType] = useState("Field Engineer");
-  const [portalPermission, setPortalPermission] = useState("Engineer");
+  const [defaultPassword, setDefaultPassword] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("18:00");
@@ -101,8 +102,9 @@ export function AddTeamMemberSheet({
     setFullName("");
     setJobTitle("");
     setDepartmentId("");
+    setEmployeeCategory("ENGINEER");
     setWorkerType("Field Engineer");
-    setPortalPermission("Engineer");
+    setDefaultPassword("");
     setStartDate("");
     setStartTime("08:00");
     setEndTime("18:00");
@@ -175,6 +177,7 @@ export function AddTeamMemberSheet({
     formData.append("fullName", fullName);
     formData.append("jobTitle", jobTitle);
     formData.append("departmentId", departmentId);
+    formData.append("employeeCategory", employeeCategory);
     formData.append("workerType", workerType);
     formData.append("startDate", startDate);
     formData.append("startTime", startTime);
@@ -185,7 +188,7 @@ export function AddTeamMemberSheet({
     const formattedDays = selectedDays.map((d) => d.toUpperCase()).join(",");
     formData.append("weekendDays", formattedDays);
 
-    formData.append("portalPermission", portalPermission);
+    if (defaultPassword) formData.append("defaultPassword", defaultPassword);
     formData.append("workEmail", workEmail);
     formData.append("phoneNumber", phoneNumber);
     if (homeAddress) formData.append("homeAddress", homeAddress);
@@ -294,8 +297,23 @@ export function AddTeamMemberSheet({
             </select>
           </div>
 
-          {/* Worker Type & Portal Permission */}
+          {/* Employee Category & Worker Type */}
           <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs font-bold text-slate-700">
+                Category <span className="text-red-500">*</span>
+              </Label>
+              <select
+                value={employeeCategory}
+                onChange={(e) => setEmployeeCategory(e.target.value)}
+                className="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none"
+              >
+                <option value="ENGINEER">Engineer</option>
+                <option value="WORKER">Worker</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
             <div className="space-y-1">
               <Label className="text-xs font-bold text-slate-700">
                 Worker Type <span className="text-red-500">*</span>
@@ -309,21 +327,6 @@ export function AddTeamMemberSheet({
                 <option value="Full-time">Full-time</option>
                 <option value="Part-time">Part-time</option>
                 <option value="Office Staff">Office Staff</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-bold text-slate-700">
-                Portal Permission <span className="text-red-500">*</span>
-              </Label>
-              <select
-                value={portalPermission}
-                onChange={(e) => setPortalPermission(e.target.value)}
-                className="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none"
-              >
-                <option value="Engineer">Engineer</option>
-                <option value="Admin">Admin</option>
-                <option value="Supervisor">Supervisor</option>
               </select>
             </div>
           </div>
@@ -437,6 +440,20 @@ export function AddTeamMemberSheet({
               value={workEmail}
               onChange={(e) => setWorkEmail(e.target.value)}
               placeholder="name@fieldops.com"
+              className="bg-white border-slate-200 h-10 rounded-xl text-xs"
+            />
+          </div>
+
+          {/* Default Password */}
+          <div className="space-y-1">
+            <Label className="text-xs font-bold text-slate-700">
+              Default Password
+            </Label>
+            <Input
+              type="password"
+              value={defaultPassword}
+              onChange={(e) => setDefaultPassword(e.target.value)}
+              placeholder="Min. 6 characters"
               className="bg-white border-slate-200 h-10 rounded-xl text-xs"
             />
           </div>

@@ -9,10 +9,7 @@ import {
   User,
   Users,
   Files,
-  MessageSquareText,
-  BarChart3,
   Puzzle,
-  Grid2X2,
 } from "lucide-react";
 
 
@@ -29,22 +26,16 @@ const navigationSections = [
     items: [
       { name: "Calendar", href: "/calendar", icon: Calendar },
       { name: "HR", href: "/hr", icon: User },
+      { name: "Leave Management", href: "/leave", icon: Calendar },
+      { name: "Projects", href: "/projects", icon: Puzzle },
       { name: "Clients", href: "/clients", icon: Users },
       { name: "Files", href: "/files", icon: Files },
-    ]
-  },
-  {
-    title: "MESSAGES",
-    items: [
-      { name: "Chat", href: "/chat", icon: MessageSquareText },
-      { name: "Email", href: "/email", icon: BarChart3 },
     ]
   },
   {
     title: "WORKSPACE",
     items: [
       { name: "Apps", href: "/apps", icon: Puzzle },
-      { name: "Team Online", href: "/team", icon: Grid2X2 },
     ]
   }
 ];
