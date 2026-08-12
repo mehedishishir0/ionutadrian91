@@ -10,6 +10,7 @@ import {
   Users,
   Files,
   Puzzle,
+  Clock3,
 } from "lucide-react";
 
 
@@ -27,6 +28,7 @@ const navigationSections = [
       { name: "Calendar", href: "/calendar", icon: Calendar },
       { name: "HR", href: "/hr", icon: User },
       { name: "Leave Management", href: "/leave", icon: Calendar },
+      { name: "Duty of Care", href: "/duty-of-care", icon: Clock3 },
       { name: "Projects", href: "/projects", icon: Puzzle },
       { name: "Clients", href: "/clients", icon: Users },
       { name: "Files", href: "/files", icon: Files },

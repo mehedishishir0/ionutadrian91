@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, FolderKanban, CheckCircle2, CircleDashed } from "lucide-react";
 import { AddProjectSheet } from "./AddProjectSheet";
+import { authenticatedFetch } from "@/lib/api";
 
 export default function ProjectsPage() {
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
@@ -19,14 +20,9 @@ export default function ProjectsPage() {
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/projects`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data || [];

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { authenticatedFetch } from "@/lib/api";
 
 interface AddProjectSheetProps {
   open: boolean;
@@ -43,13 +44,10 @@ export function AddProjectSheet({ open, onOpenChange }: AddProjectSheetProps) {
     mutationKey: ["create-project"],
     mutationFn: async (payload: any) => {
       const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/projects`, {
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { FileText, Plus } from "lucide-react";
+import { authenticatedFetch } from "@/lib/api";
 
 export default function MyLeave() {
   const queryClient = useQueryClient();
@@ -21,15 +22,12 @@ export default function MyLeave() {
   const [file, setFile] = useState<File | null>(null);
   
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-  const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
   // Fetch History
   const { data: history, isLoading } = useQuery({
     queryKey: ["my-leave-history"],
     queryFn: async () => {
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/leave/my-history`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/leave/my-history`);
       const resData = await res.json();
       return resData?.data || [];
     },
@@ -45,10 +43,9 @@ export default function MyLeave() {
         formData.append("file", file);
       }
 
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/leave/apply`, {
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/leave/apply`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });

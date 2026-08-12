@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authenticatedFetch } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -36,19 +37,12 @@ export function AddDepartmentModal({
     mutationFn: async ({ name, description }: CreateDepartmentPayload) => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-      if (!token) {
-        throw new Error("Missing NEXT_PUBLIC_API_TOKEN environment variable");
-      }
-
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name,

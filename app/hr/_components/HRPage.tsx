@@ -20,6 +20,7 @@ import { ViewEmployeeSheet, EmployeeDetails } from "./ViewEmployeeSheet";
 
 import { EditEmployeeSheet } from "./EditEmployeeSheet";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
+import { authenticatedFetch } from "@/lib/api";
 
 export default function HRPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -42,14 +43,9 @@ export default function HRPage() {
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/team-members`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data || [];
@@ -61,14 +57,9 @@ export default function HRPage() {
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data || [];

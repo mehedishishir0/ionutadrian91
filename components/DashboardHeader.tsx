@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import {  Bell } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { Bell, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +43,15 @@ export default function DashboardHeader() {
             aria-label="Notifications"
           >
             <Bell className="h-[18px] w-[18px]" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-full bg-[#EAE8E1]/60 text-[#475569] hover:bg-[#E2DFD6] hover:text-[#0F172A] transition-colors"
+            aria-label="Sign out"
+            onClick={() => signOut({ callbackUrl: "/auth/login" })}
+          >
+            <LogOut className="h-[18px] w-[18px]" />
           </Button>
         </div>
 

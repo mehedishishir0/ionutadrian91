@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Camera, Clock, UploadCloud, File as FileIcon, X } from "lucide-react";
 import Image from "next/image";
+import { authenticatedFetch } from "@/lib/api";
 
 interface EditEmployeeSheetProps {
   open: boolean;
@@ -106,14 +107,9 @@ export function EditEmployeeSheet({
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        {},
       );
       const data = await res.json();
       return data?.data || [];
@@ -126,14 +122,9 @@ export function EditEmployeeSheet({
       if (!employeeId) return null;
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${employeeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data;
@@ -175,14 +166,11 @@ export function EditEmployeeSheet({
     mutationFn: async (formData: FormData) => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${employeeId}`,
         {
           method: "PATCH",
           headers: {
-            Authorization: `Bearer ${token}`,
           },
           body: formData,
         },

@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authenticatedFetch } from "@/lib/api";
 import {
   Sheet,
   SheetContent,
@@ -82,12 +83,10 @@ export function AddTeamMemberSheet({
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -123,14 +122,11 @@ export function AddTeamMemberSheet({
     mutationFn: async (formData: FormData) => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/team-members`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
           },
           body: formData,
         },

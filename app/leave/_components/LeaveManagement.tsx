@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { authenticatedFetch } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,15 +21,12 @@ export default function LeaveManagement() {
   const [employeeName, setEmployeeName] = useState("");
   
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-  const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
   // Fetch Dashboard Stats
   const { data: stats } = useQuery({
     queryKey: ["leave-dashboard"],
     queryFn: async () => {
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/leave/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/leave/dashboard`);
       const resData = await res.json();
       return resData?.data || { totalRequests: 0, pendingRequests: 0, approvedRequests: 0 };
     },
@@ -42,9 +40,7 @@ export default function LeaveManagement() {
       if (employeeName) {
         url += `?employeeName=${encodeURIComponent(employeeName)}`;
       }
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authenticatedFetch(url);
       const resData = await res.json();
       return resData?.data || [];
     },
@@ -53,11 +49,10 @@ export default function LeaveManagement() {
   // Update Status Mutation
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/leave/${id}/status`, {
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/leave/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status }),
       });

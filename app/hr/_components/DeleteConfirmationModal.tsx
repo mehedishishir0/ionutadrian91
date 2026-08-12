@@ -3,6 +3,7 @@
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authenticatedFetch } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -31,12 +32,9 @@ export function DeleteConfirmationModal({
     mutationFn: async (id: string) => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-      const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${id}`, {
+      const res = await authenticatedFetch(`${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
         },
       });
 

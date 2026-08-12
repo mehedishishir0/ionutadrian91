@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, Eye, Download } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { authenticatedFetch } from "@/lib/api";
 
 export interface DocumentItem {
   name: string;
@@ -70,14 +71,9 @@ export function ViewEmployeeSheet({
       if (!employee?.id) return null;
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/team-members/${employee.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data;
@@ -90,14 +86,9 @@ export function ViewEmployeeSheet({
     queryFn: async () => {
       const apiBaseURL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const token = process.env.NEXT_PUBLIC_API_TOKEN;
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${apiBaseURL.replace(/\/$/, "")}/hr/departments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
       const resData = await res.json();
       return resData?.data || [];
