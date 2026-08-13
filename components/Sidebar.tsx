@@ -11,40 +11,52 @@ import {
   Files,
   Puzzle,
   Clock3,
+  AlertTriangle,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
-
-
-const navigationSections = [
-  {
-    title: "",
-    items: [
-      { name: "Dashboard", href: "/", icon: LayoutGrid },
-    ]
-  },
-  {
-    title: "ADMIN",
-    items: [
-      { name: "Calendar", href: "/calendar", icon: Calendar },
-      { name: "HR", href: "/hr", icon: User },
-      { name: "Leave Management", href: "/leave", icon: Calendar },
-      { name: "Duty of Care", href: "/duty-of-care", icon: Clock3 },
-      { name: "Projects", href: "/projects", icon: Puzzle },
-      { name: "Clients", href: "/clients", icon: Users },
-      { name: "Files", href: "/files", icon: Files },
-    ]
-  },
-  {
-    title: "WORKSPACE",
-    items: [
-      { name: "Apps", href: "/apps", icon: Puzzle },
-    ]
-  }
-];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const role = session?.user?.role;
+  const isManager = role === "ADMIN" || role === "ADMINISTRATOR" || role === "HR";
 
+  const navigationSections = [
+    {
+      title: "",
+      items: [
+        { name: "Dashboard", href: "/", icon: LayoutGrid },
+      ]
+    },
+    ...(isManager ? [{
+      title: "ADMIN",
+      items: [
+        { name: "Calendar", href: "/calendar", icon: Calendar },
+        { name: "HR", href: "/hr", icon: User },
+        { name: "Leave Management", href: "/leave", icon: Calendar },
+        { name: "Duty of Care", href: "/duty-of-care", icon: Clock3 },
+        { name: "Incidents", href: "/incidents", icon: AlertTriangle },
+        { name: "Projects", href: "/projects", icon: Puzzle },
+        { name: "Clients", href: "/clients", icon: Users },
+        { name: "Files", href: "/files", icon: Files },
+      ]
+    }] : []),
+    ...(!isManager ? [{
+      title: "WORKER",
+      items: [
+        { name: "My Duty of Care", href: "/duty-of-care", icon: Clock3 },
+        { name: "My Leave", href: "/my-leave", icon: Calendar },
+        { name: "Report Incident", href: "/incidents", icon: AlertTriangle },
+      ]
+    }] : []),
+    {
+      title: "WORKSPACE",
+      items: [
+        { name: "Apps", href: "/apps", icon: Puzzle },
+      ]
+    }
+  ];
 
   return (
     <aside className="flex flex-col w-[240px] bg-[#FFFFFF] border  border-[#FBF3C4] h-screen shrink-0 select-none">

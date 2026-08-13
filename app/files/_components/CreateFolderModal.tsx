@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, SlidersHorizontal, CheckCircle2, Circle, X } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  CheckCircle2,
+  Circle,
+  X,
+} from "lucide-react";
 
 export interface Member {
   id: string;
@@ -92,7 +98,7 @@ export function CreateFolderModal({
   };
 
   const filteredMembers = allMembers.filter((m) =>
-    m.name.toLowerCase().includes(searchQuery.toLowerCase())
+    m.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -136,7 +142,7 @@ export function CreateFolderModal({
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
                 <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
-                <Input
+                <Input                                                                     
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search members by name or email..."
